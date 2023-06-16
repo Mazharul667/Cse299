@@ -222,3 +222,38 @@ print(intermediate_output_train)
 print(intermediate_output_test)
 
 model.save('/content/drive/MyDrive/Colab Notebooks/models/resnet') #to save resnet
+
+import cv2
+import numpy as np
+from keras.models import load_model
+
+model = load_model('/content/drive/MyDrive/Colab Notebooks/models/resnet')
+
+while 2>1 :
+    test_image_path_1 = input("Enter the path to the first test image: ")
+    test_image_path_2 = input("Enter the path to the second test image: ")
+
+    image_1 = cv2.imread(test_image_path_1)
+    image_rgb_1 = cv2.cvtColor(image_1, cv2.COLOR_BGR2RGB)
+    resized_image_1 = cv2.resize(image_rgb_1, (224, 224))
+    normalized_image_1 = resized_image_1 / 255.0
+    preprocessed_image_1 = np.expand_dims(normalized_image_1, axis=0)
+
+    image_2 = cv2.imread(test_image_path_2)
+    image_rgb_2 = cv2.cvtColor(image_2, cv2.COLOR_BGR2RGB)
+    resized_image_2 = cv2.resize(image_rgb_2, (224, 224))
+    normalized_image_2 = resized_image_2 / 255.0
+    preprocessed_image_2 = np.expand_dims(normalized_image_2, axis=0)
+
+    prediction_1 = model.predict(preprocessed_image_1)
+    prediction_2 = model.predict(preprocessed_image_2)
+
+    if prediction_1[0][0] > 0.5:
+        print("First image: Genuine signature")
+    else:
+        print("First image: Forged signature")
+
+    if prediction_2[0][0] > 0.5:
+        print("Second image: Genuine signature")
+    else:
+        print("Second image: Forged signature")
